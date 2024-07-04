@@ -33,4 +33,4 @@ async function makeCommit(n) {
 }
 
 // Number of commits
-makeCommit(60);
+makeCommit(10);
