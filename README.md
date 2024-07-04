@@ -20,6 +20,14 @@ This repository contains a Node.js script that automates the process of making r
    ```sh
    npm install
    ```
+3. If not already initialized, initialize a local Git repository and link it to your remote repository:
+   ```sh
+   # Delete old .git if already exist and create another one
+   git init
+
+   # Link your repository with your local prj
+   git remote add origin https://github.com/your-username/automated-git-committer.git
+   ```
 
 ## Usage
 
