@@ -4,6 +4,12 @@ const fs = require('fs');
 
 const FILE_PATH = "./data.txt";
 
+// Change the number of Commits
+const TOTAL_COMMITS = 10;
+
+// 0.8 second delay between commits
+const DELAY = 800; 
+
 // Create an instance of simpleGit
 const git = simpleGit();
 
@@ -13,11 +19,15 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-async function makeCommit(n) {
+async function makeCommit(n, total) {
     if (n === 0) {
-        // git.push();
+        console.log("✅ All the commits have been completed. You can push them now by git push.");
         return;
     }
+
+    const currentCommit = total - n + 1;
+    console.log(`\n🚀 ${currentCommit}/${total}: generating...`);
+
     const x = getRandomInt(0, 54);
     const y = getRandomInt(0, 6);
     const DATE = moment().subtract(1, "y").add(x, "w").add(y, "d").format();
@@ -25,12 +35,18 @@ async function makeCommit(n) {
     fs.writeFileSync(FILE_PATH, DATE);
     process.env.GIT_COMMITTER_DATE = DATE;
     process.env.GIT_AUTHOR_DATE = DATE;
-    
+
+    console.log(`📂 ${currentCommit}/${total}: adding...`);
     await git.add([FILE_PATH]);
+
+    console.log(`📝 ${currentCommit}/${total}: committing...`);
     await git.commit(DATE);
 
-    makeCommit(n - 1);
+    console.log(`✅ ${currentCommit}/${total}: Done`);
+
+    setTimeout(() => makeCommit(n - 1, total), DELAY);
 }
 
-// Number of commits
-makeCommit(10);
+// Start the commit process
+console.log("🌟 starting...");
+makeCommit(TOTAL_COMMITS, TOTAL_COMMITS);
