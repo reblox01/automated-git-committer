@@ -20,6 +20,14 @@ This repository contains a Node.js script that automates the process of making r
    ```sh
    npm install
    ```
+3. If not already initialized, initialize a local Git repository and link it to your remote repository:
+   ```sh
+   # Delete old .git if already exist and create another one
+   git init
+
+   # Link your repository with your local prj
+   git remote add origin https://github.com/your-username/automated-git-committer.git
+   ```
 
 ## Usage
 
@@ -50,7 +58,7 @@ This repository contains a Node.js script that automates the process of making r
 
 If you find this project helpful and would like to support its development, you can buy me a coffee:
 
-[![Buy Me a Coffee](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/arosck1)
+<a href="https://www.buymeacoffee.com/arosck1"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=arosck1&button_colour=BD5FFF&font_colour=ffffff&font_family=Cookie&outline_colour=000000&coffee_colour=FFDD00" /></a>
 
 ## License
 
