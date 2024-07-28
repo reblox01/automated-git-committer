@@ -5,10 +5,10 @@ const fs = require('fs');
 const FILE_PATH = "./data.txt";
 
 // Change the number of Commits
-const TOTAL_COMMITS = 10;
+const TOTAL_COMMITS = 13;
 
-// 0.8 second delay between commits
-const DELAY = 800; 
+// 0.9 second delay
+const DELAY = 900;
 
 // Create an instance of simpleGit
 const git = simpleGit();
@@ -17,6 +17,23 @@ function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function startProgressBar(totalTime, stepTime) {
+    const totalSteps = Math.floor(totalTime / stepTime);
+    let currentStep = 0;
+    return setInterval(() => {
+        currentStep++;
+        const percentage = Math.min(Math.floor((currentStep / totalSteps) * 100), 100);
+        const progress = '='.repeat(Math.floor((percentage / 100) * 50)) + ' '.repeat(50 - Math.floor((percentage / 100) * 50));
+        process.stdout.write(`\r[${progress}] ${percentage}%`);
+        if (currentStep >= totalSteps) {
+            clearInterval(this);
+            
+            // Clear the line
+            process.stdout.write('\r');
+        }
+    }, stepTime);
 }
 
 async function makeCommit(n, total) {
@@ -40,11 +57,14 @@ async function makeCommit(n, total) {
     await git.add([FILE_PATH]);
 
     console.log(`📝 ${currentCommit}/${total}: committing...`);
+    const progressBar = startProgressBar(DELAY, 20); // Update more frequently
+    await new Promise(resolve => setTimeout(resolve, DELAY));
+    clearInterval(progressBar);
     await git.commit(DATE);
 
     console.log(`✅ ${currentCommit}/${total}: Done`);
 
-    setTimeout(() => makeCommit(n - 1, total), DELAY);
+    makeCommit(n - 1, total);
 }
 
 // Start the commit process
