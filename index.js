@@ -5,7 +5,7 @@ const fs = require('fs');
 const FILE_PATH = "./data.txt";
 
 // Change the number of Commits
-const TOTAL_COMMITS = 13;
+const TOTAL_COMMITS = 10;
 
 // 0.9 second delay
 const DELAY = 900;
