@@ -7,7 +7,11 @@ This repository contains a Node.js script that automates the process of making r
 - Randomly generates commit dates within the past year.
 - Writes the generated date to a specified file.
 - Commits the changes with the generated date.
-- Repeats the process for a specified number of commits.
+- Repeats the process for a user-specified number of commits.
+- Prompts for the number of commits to make at runtime.
+- Asks if the user wants to start another task after completion, allowing for a new run without restarting the script manually.
+- Handles invalid input by asking the user to enter a valid number of commits.
+- Uses clear and informative progress bars and messages during the commit process.
 
 ## Installation
 
