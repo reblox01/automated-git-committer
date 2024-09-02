@@ -1,5 +1,9 @@
 # Automated Git Committer
 
+![Thumbnail](https://github.com/reblox01/automated-git-committer/blob/f420bf67e6912a7dc80d8b10a97a07b659ffde7e/thumbnail.jpg)
+
+## Overview
+
 This repository contains a Node.js script that automates the process of making random commits to a specified file in a Git repository. The script uses `simple-git` for Git operations and `moment` for date manipulation.
 
 ## Features
