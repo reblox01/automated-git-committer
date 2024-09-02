@@ -1,17 +1,47 @@
 const moment = require('moment');
 const simpleGit = require('simple-git');
 const fs = require('fs');
+const readline = require('readline');
 
 const FILE_PATH = "./data.txt";
-
-// Change the number of Commits
-const TOTAL_COMMITS = 10;
-
-// 0.9 second delay
 const DELAY = 900;
+const WIDTH = 80;
+
+// ANSI escape codes for colors
+const GREEN = '\x1b[32m';
+const RESET = '\x1b[0m';
+
+// GitHub repository URL
+const GITHUB_URL = 'https://github.com/reblox01/automated-git-committer.git';
 
 // Create an instance of simpleGit
 const git = simpleGit();
+
+// Function to display ASCII art and title
+function displayAsciiArt() {
+    const asciiArt = `
+${GREEN}                _         _____                          _ _   _            
+     /\\        | |       / ____|                        (_) | | |           
+    /  \\  _   _| |_ ___ | |     ___  _ __ ___  _ __ ___  _| |_| |_ ___ _ __ 
+   / /\\ \\| | | | __/ _ \\| |    / _ \\| '_ \` _ \\| '_ \` _ \\| | __| __/ _ \\ '__|
+  / ____ \\ |_| | || (_) | |___| (_) | | | | | | | | | | | | |_| ||  __/ |   
+ /_/    \\_\\__,_|\__\\___/ \\_____\\___/|_| |_| |_|_| |_| |_|_|\__|\__\\___|_|   
+    ${RESET}`;
+
+    const title = `${GREEN}Automated Git Committer${RESET}`;
+    const underline = '='.repeat(title.length);
+    const centeredTitle = centerText(title, WIDTH);
+    const centeredUnderline = centerText(`${GREEN}${underline}${RESET}`, WIDTH);
+    const centeredGithub = centerText(`${GREEN}Github:${RESET} ${GITHUB_URL}`, WIDTH);
+
+    console.log(`${asciiArt}\n\n${centeredTitle}\n${centeredUnderline}\n${centeredGithub}\n\n\n`);
+    askUserForCommits();
+}
+
+function centerText(text, width) {
+    const padding = Math.max(0, Math.floor((width - text.length) / 2));
+    return ' '.repeat(padding) + text;
+}
 
 function getRandomInt(min, max) {
     min = Math.ceil(min);
@@ -29,8 +59,6 @@ function startProgressBar(totalTime, stepTime) {
         process.stdout.write(`\r[${progress}] ${percentage}%`);
         if (currentStep >= totalSteps) {
             clearInterval(this);
-            
-            // Clear the line
             process.stdout.write('\r');
         }
     }, stepTime);
@@ -38,7 +66,8 @@ function startProgressBar(totalTime, stepTime) {
 
 async function makeCommit(n, total) {
     if (n === 0) {
-        console.log("✅ All the commits have been completed. You can push them now by git push.");
+        console.log(`${GREEN}✅ All the commits have been completed. You can push them now by git push.${RESET}`);
+        promptRestart();
         return;
     }
 
@@ -57,7 +86,7 @@ async function makeCommit(n, total) {
     await git.add([FILE_PATH]);
 
     console.log(`📝 ${currentCommit}/${total}: committing...`);
-    const progressBar = startProgressBar(DELAY, 20); // Update more frequently
+    const progressBar = startProgressBar(DELAY, 20);
     await new Promise(resolve => setTimeout(resolve, DELAY));
     clearInterval(progressBar);
     await git.commit(DATE);
@@ -67,6 +96,47 @@ async function makeCommit(n, total) {
     makeCommit(n - 1, total);
 }
 
-// Start the commit process
-console.log("🌟 starting...");
-makeCommit(TOTAL_COMMITS, TOTAL_COMMITS);
+function askUserForCommits() {
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+
+    rl.question('How many commits do you want to make? ', (input) => {
+        const numCommits = parseInt(input, 10);
+        if (isNaN(numCommits) || numCommits <= 0) {
+            console.log(`${GREEN}⚠️ Please enter a valid number greater than 0.${RESET}`);
+            rl.close();
+            askUserForCommits(); // Ask again if the input is invalid
+        } else {
+            rl.close();
+            makeCommit(numCommits, numCommits);
+        }
+    });
+}
+
+function promptRestart() {
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
+
+    rl.question('Want to start another task? (Y/N) ', (answer) => {
+        if (['y', 'yes'].includes(answer.toLowerCase())) {
+            rl.close();
+            console.log(`${GREEN}😃 Restarting...${RESET}\n`);
+            askUserForCommits();
+        } else if (['n', 'no'].includes(answer.toLowerCase())) {
+            console.log(`${GREEN}👋 Exiting...${RESET}`);
+            rl.close();
+            process.exit(0);
+        } else {
+            console.log(`${GREEN}⚠️ Please answer with Y or N or YES or NO.${RESET}`);
+            rl.close();
+            promptRestart(); // Ask again if the input is invalid
+        }
+    });
+}
+
+// Display ASCII Art and title, then ask for the number of commits
+displayAsciiArt();
